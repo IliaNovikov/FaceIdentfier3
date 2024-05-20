@@ -1,6 +1,7 @@
 package com.novikov.faceidentfier3.service
 
 import android.util.Log
+import com.novikov.faceidentfier3.GlobalValues
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.Call
@@ -28,7 +29,8 @@ class NetworkService {
             .addFormDataPart("file", "face.jpg", RequestBody.create("image/jpg".toMediaType(), file))
             .build()
         val request = Request.Builder()
-            .url("http://192.168.1.104:8000/face")
+//            .url("http://192.168.1.103:8000/face")
+            .url("http://192.168.88.114:8000/access")
             .post(requestBody)
             .build()
 
@@ -41,16 +43,18 @@ class NetworkService {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                Log.i("response", response.body!!.string())
-                result = response.body!!.string() == "success"
+//                Log.i("response", response.body!!.string())
+                result = response.body!!.string() == "\"success\""
                 countDownLatch.countDown()
             }
-
         })
 
         withContext(Dispatchers.IO) {
             countDownLatch.await()
         }
+
+//        Log.i("result", result.toString())
+        GlobalValues.requestResult = result
 
         return result
 

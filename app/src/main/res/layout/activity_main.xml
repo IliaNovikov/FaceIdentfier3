@@ -21,4 +21,25 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginVertical="48dp"/>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginVertical="48dp"
+        android:background="#80000000" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="260dp"
+        android:layout_height="300dp"
+        app:layout_constraintBottom_toBottomOf="@+id/svMain"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/svMain"
+        app:layout_constraintTop_toTopOf="@+id/svMain"
+        app:cardCornerRadius="300dp"
+        android:backgroundTint="#26FFFFFF"
+        android:background="@color/white"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

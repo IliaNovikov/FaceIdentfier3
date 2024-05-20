@@ -1,6 +1,7 @@
 package com.novikov.faceidentfier3
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Canvas
 import android.graphics.Color
@@ -12,6 +13,7 @@ import android.hardware.Camera.FaceDetectionListener
 import android.hardware.Camera.open
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.os.HandlerThread
 import android.os.PersistableBundle
 import android.util.Log
@@ -23,6 +25,7 @@ import com.novikov.faceidentfier3.databinding.ActivityMainBinding
 import com.novikov.faceidentfier3.service.NetworkService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), TextureView.SurfaceTextureListener, SurfaceHolder.Callback {
@@ -41,7 +44,6 @@ class MainActivity : AppCompatActivity(), TextureView.SurfaceTextureListener, Su
             Log.i("faceCount", faces?.size.toString())
             if (faces?.size!! > 0){
                 val rectangle = faces[0].rect
-                val mouth = faces[0].leftEye
                 canvas = binding.tvMain.lockCanvas()!!
                 canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
                 rectangle.offset(-800, -600)
@@ -58,8 +60,23 @@ class MainActivity : AppCompatActivity(), TextureView.SurfaceTextureListener, Su
                 if (!isWriting){
                     isWriting = true
                     CoroutineScope(Dispatchers.IO).launch {
+                        delay(1000)
                         surfaceConverter.surfaceToFile(binding.svMain)
+
                     }.invokeOnCompletion {
+                        Log.i("gv", GlobalValues.requestResult.toString())
+                        try{
+                            runOnUiThread {
+                                if(GlobalValues.requestResult)
+                                    Toast.makeText(this@MainActivity, "Успешно", Toast.LENGTH_SHORT).show()
+                                else
+                                    Toast.makeText(this@MainActivity, "Ошибка", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        catch (ex: Exception){
+                            Log.e("toast", ex.message.toString())
+                        }
+
                         isWriting = false
                     }
                 }
@@ -87,7 +104,8 @@ class MainActivity : AppCompatActivity(), TextureView.SurfaceTextureListener, Su
 //        handlerThread.start()
 //        bitmapConverter.handler = Handler(handlerThread.looper)
 
-        if(checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED){
+        if(checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+            && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
             requestPermissions(arrayOf(Manifest.permission.CAMERA,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -118,6 +136,8 @@ class MainActivity : AppCompatActivity(), TextureView.SurfaceTextureListener, Su
 
         if (requestCode == 1){
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+//                startActivity(MainActivity().intent)
+                this.recreate()
                 return
             }
             else{
