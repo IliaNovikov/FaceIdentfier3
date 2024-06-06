@@ -20,6 +20,7 @@ import android.util.Log
 import android.view.SurfaceHolder
 import android.view.TextureView
 import android.widget.Toast
+import com.google.android.material.snackbar.Snackbar
 import com.novikov.faceidentfier3.converter.SurfaceConverter
 import com.novikov.faceidentfier3.databinding.ActivityMainBinding
 import com.novikov.faceidentfier3.service.NetworkService
@@ -60,7 +61,7 @@ class MainActivity : AppCompatActivity(), TextureView.SurfaceTextureListener, Su
                 if (!isWriting){
                     isWriting = true
                     CoroutineScope(Dispatchers.IO).launch {
-                        delay(1000)
+//                        delay(1000)
                         surfaceConverter.surfaceToFile(binding.svMain)
 
                     }.invokeOnCompletion {
@@ -68,9 +69,16 @@ class MainActivity : AppCompatActivity(), TextureView.SurfaceTextureListener, Su
                         try{
                             runOnUiThread {
                                 if(GlobalValues.requestResult)
-                                    Toast.makeText(this@MainActivity, "Успешно", Toast.LENGTH_SHORT).show()
+                                    Snackbar.make(binding.root, "Проход разрешен", Snackbar.LENGTH_SHORT)
+                                        .setBackgroundTint(getColor(R.color.green))
+                                        .show()
+//                                    Toast.makeText(this@MainActivity, "Успешно", Toast.LENGTH_SHORT).show()
                                 else
-                                    Toast.makeText(this@MainActivity, "Ошибка", Toast.LENGTH_SHORT).show()
+                                    Snackbar.make(binding.root, "Ошибка", Snackbar.LENGTH_SHORT)
+                                        .setBackgroundTint(getColor(R.color.red))
+                                        .show()
+
+//                                    Toast.makeText(this@MainActivity, "Ошибка", Toast.LENGTH_SHORT).show()
                             }
                         }
                         catch (ex: Exception){
