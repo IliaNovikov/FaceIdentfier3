@@ -44,49 +44,59 @@ class MainActivity : AppCompatActivity(), TextureView.SurfaceTextureListener, Su
         override fun onFaceDetection(faces: Array<out Camera.Face>?, camera: Camera?) {
             Log.i("faceCount", faces?.size.toString())
             if (faces?.size!! > 0){
+                faces.sortBy { it.rect.height() }
                 val rectangle = faces[0].rect
-                canvas = binding.tvMain.lockCanvas()!!
-                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
-                rectangle.offset(-800, -600)
-                canvas.drawRect(-rectangle.exactCenterY() - 350f,
-                    -rectangle.exactCenterX() - 350f,
-                    -rectangle.exactCenterY() + 350f,
-                    -rectangle.exactCenterX() + 350f,
-                    paint)
+                Log.i("face height", rectangle.height().toString())
+                Log.i("face widht", rectangle.width().toString())
+                if (rectangle.height() >= 1000){
+                    canvas = binding.tvMain.lockCanvas()!!
+                    canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+                    rectangle.offset(-600, -450)
+                    canvas.drawRect(-rectangle.exactCenterY() - 200f,
+                        -rectangle.exactCenterX() - 200f,
+                        -rectangle.exactCenterY() + 200f,
+                        -rectangle.exactCenterX() + 200f,
+                        paint)
 
-                Log.i("rect centerX", rectangle.exactCenterX().toString())
-                Log.i("rect centerY", rectangle.exactCenterY().toString())
-                binding.tvMain.unlockCanvasAndPost(canvas)
+                    Log.i("rect centerX", rectangle.exactCenterX().toString())
+                    Log.i("rect centerY", rectangle.exactCenterY().toString())
+                    binding.tvMain.unlockCanvasAndPost(canvas)
 
-                if (!isWriting){
-                    isWriting = true
-                    CoroutineScope(Dispatchers.IO).launch {
-//                        delay(1000)
-                        surfaceConverter.surfaceToFile(binding.svMain)
-
-                    }.invokeOnCompletion {
-                        Log.i("gv", GlobalValues.requestResult.toString())
-                        try{
-                            runOnUiThread {
-                                if(GlobalValues.requestResult)
-                                    Snackbar.make(binding.root, "Проход разрешен", Snackbar.LENGTH_SHORT)
-                                        .setBackgroundTint(getColor(R.color.green))
-                                        .show()
+                    if (!isWriting){
+                        isWriting = true
+                        CoroutineScope(Dispatchers.IO).launch {
+                            delay(1000)
+                            surfaceConverter.surfaceToFile(binding.svMain)
+                        }.invokeOnCompletion {
+                            Log.i("gv", GlobalValues.requestResult.toString())
+                            try{
+                                runOnUiThread {
+                                    if(GlobalValues.requestResult)
+                                        Snackbar.make(binding.root, "Проход разрешен", Snackbar.LENGTH_SHORT)
+                                            .setBackgroundTint(getColor(R.color.green))
+                                            .show()
 //                                    Toast.makeText(this@MainActivity, "Успешно", Toast.LENGTH_SHORT).show()
-                                else
-                                    Snackbar.make(binding.root, "Ошибка", Snackbar.LENGTH_SHORT)
-                                        .setBackgroundTint(getColor(R.color.red))
-                                        .show()
+                                    else
+                                        Snackbar.make(binding.root, "Ошибка", Snackbar.LENGTH_SHORT)
+                                            .setBackgroundTint(getColor(R.color.red))
+                                            .show()
 
 //                                    Toast.makeText(this@MainActivity, "Ошибка", Toast.LENGTH_SHORT).show()
+                                }
                             }
-                        }
-                        catch (ex: Exception){
-                            Log.e("toast", ex.message.toString())
-                        }
+                            catch (ex: Exception){
+                                Log.e("toast", ex.message.toString())
+                            }
+                            Thread.sleep(3000)
+                            isWriting = false
 
-                        isWriting = false
+                        }
                     }
+                }
+                else{
+                    canvas = binding.tvMain.lockCanvas()!!
+                    canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+                    binding.tvMain.unlockCanvasAndPost(canvas)
                 }
             }
 

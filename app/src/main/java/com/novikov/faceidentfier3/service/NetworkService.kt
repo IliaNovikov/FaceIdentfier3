@@ -29,11 +29,11 @@ class NetworkService {
             .addFormDataPart("file", "face.jpg", RequestBody.create("image/jpg".toMediaType(), file))
             .build()
         val request = Request.Builder()
-            .url("http://213.5.109.61:9090/face_analytics/predict")
-//            .url("http://10.100.50.10:6400/access")
+//            .url("http://213.5.109.61:9090/face_analytics/predict")
+            .url("http://10.100.50.10:8000/face_recognition")
 //            .url("http://192.168.43.150:8000/predict")
 //            .url("http://192.168.1.104:8000/access")
-//            .url("http://192.168.88.114:8000/predict")
+//            .url("http://10.100.50.10:8000/predict")predict
             .post(requestBody)
             .build()
 
@@ -47,8 +47,27 @@ class NetworkService {
 
             override fun onResponse(call: Call, response: Response) {
 //                Log.i("response", response.body!!.string())
-//                result = response.body!!.string() == "\"success\""
-                Log.i("status", response.body!!.string().toString())
+                result = response.body!!.string() == "\"success\""
+                if (result){
+                    val access_request = Request.Builder()
+                        .url("http://10.100.50.10:8000/access")
+                        .get()
+                        .build()
+
+                    val access_call = client.newCall(access_request)
+
+                    access_call.enqueue(object : Callback{
+                        override fun onFailure(call: Call, e: IOException) {
+                            Log.i("call", "failure")
+                        }
+
+                        override fun onResponse(call: Call, response: Response) {
+                            Log.i("call", "response")
+                        }
+
+                    })
+                }
+//                Log.i("status", response.body!!.string().toString())
                 countDownLatch.countDown()
             }
         })
