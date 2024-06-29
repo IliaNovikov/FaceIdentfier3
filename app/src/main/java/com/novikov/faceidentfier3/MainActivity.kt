@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity(), TextureView.SurfaceTextureListener, Su
                     if (!isWriting){
                         isWriting = true
                         CoroutineScope(Dispatchers.IO).launch {
-                            delay(1000)
+//                            delay(1000)
                             surfaceConverter.surfaceToFile(binding.svMain)
                         }.invokeOnCompletion {
                             Log.i("gv", GlobalValues.requestResult.toString())
