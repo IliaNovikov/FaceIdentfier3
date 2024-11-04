@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity(), TextureView.SurfaceTextureListener, Su
                 val rectangle = faces[0].rect
                 Log.i("face height", rectangle.height().toString())
                 Log.i("face widht", rectangle.width().toString())
-                if (rectangle.height() >= 1000){
+                if (rectangle.height() >= 700){
                     canvas = binding.tvMain.lockCanvas()!!
                     canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
                     rectangle.offset(-600, -450)
@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity(), TextureView.SurfaceTextureListener, Su
                     if (!isWriting){
                         isWriting = true
                         CoroutineScope(Dispatchers.IO).launch {
-//                            delay(1000)
+                            delay(1000)
                             surfaceConverter.surfaceToFile(binding.svMain)
                         }.invokeOnCompletion {
                             Log.i("gv", GlobalValues.requestResult.toString())
@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity(), TextureView.SurfaceTextureListener, Su
                             catch (ex: Exception){
                                 Log.e("toast", ex.message.toString())
                             }
-                            Thread.sleep(3000)
+//                            Thread.sleep(3000)
                             isWriting = false
 
                         }

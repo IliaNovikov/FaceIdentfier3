@@ -31,9 +31,7 @@ class NetworkService {
         val request = Request.Builder()
 //            .url("http://213.5.109.61:9090/face_analytics/predict")
             .url("http://10.100.50.10:8000/face_recognition")
-//            .url("http://192.168.43.150:8000/predict")
-//            .url("http://192.168.1.104:8000/access")
-//            .url("http://10.100.50.10:8000/predict")predict
+//            .url("http://10.100.50.10:8000/access")
             .post(requestBody)
             .build()
 
